@@ -744,7 +744,11 @@ function pokestopLabel(expireTime, latitude, longitude, stopName) {
             '</div>' +
             '<div>' +
             'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ')" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ', ' + longitude.toFixed(7) + '</a>' +
+            '</div>'+
+            '<div>' +
+            '<a href="javascript:void(0)" onclick="javascript:dropLure(\'' + latitude + ',' + longitude + '\')" title="' + i8ln('Drop Lure') + '">' + i8ln('Drop Lure') + '</a>' +
             '</div>'
+
     } else {
         str =
             '<div>' +
@@ -752,6 +756,9 @@ function pokestopLabel(expireTime, latitude, longitude, stopName) {
             '</div>' +
             '<div>' +
             'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ')" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ', ' + longitude.toFixed(7) + '</a>' +
+            '</div>' +
+            '<div>' +
+            '<a href="javascript:void(0)" onclick="javascript:dropLure(\'' + latitude + ',' + longitude + '\')" title="' + i8ln('Drop Lure') + '">' + i8ln('Drop Lure') + '</a>' +
             '</div>'
     }
 
@@ -1567,6 +1574,40 @@ function loadWeatherCellData(cell) {
         },
         complete: function complete() {
 
+        }
+    })
+}
+
+function dropLure($coords){
+    console.log($coords);
+    return $.ajax({
+        url: 'lures/user/' + $coords + '/60/',
+        type: 'GET',
+        timeout: 300000,
+        cache: false,
+        error: function error() {
+            // Display error toast
+            toastr['error']('Error Placing Lure', 'Error getting data')
+            toastr.options = {
+                'closeButton': true,
+                'debug': false,
+                'newestOnTop': true,
+                'progressBar': false,
+                'positionClass': 'toast-top-right',
+                'preventDuplicates': true,
+                'onclick': null,
+                'showDuration': '300',
+                'hideDuration': '1000',
+                'timeOut': '25000',
+                'extendedTimeOut': '1000',
+                'showEasing': 'swing',
+                'hideEasing': 'linear',
+                'showMethod': 'fadeIn',
+                'hideMethod': 'fadeOut'
+            }
+        },
+        complete: function complete() {
+            rawDataIsLoading = false
         }
     })
 }
