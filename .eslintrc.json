@@ -87,6 +87,7 @@
     "gymSidebar": true,
     "enablePokemon": true,
     "enablePokestops": true,
+    "pokestopLureDropURL": true,
     "enableLured": true,
     "showWeather": true,
     "enableWeatherOverlay": true,

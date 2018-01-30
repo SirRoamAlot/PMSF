@@ -1581,7 +1581,7 @@ function loadWeatherCellData(cell) {
 function dropLure($coords){
     console.log($coords);
     return $.ajax({
-        url: 'lures/user/' + $coords + '/60/',
+        url: pokestopLureDropURL + 'lures/user/' + $coords + '/60/',
         type: 'GET',
         timeout: 300000,
         cache: false,
