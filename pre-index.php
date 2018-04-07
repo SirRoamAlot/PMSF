@@ -1,4 +1,11 @@
 <?php
+require_once(dirname(dirname(__FILE__)) . "/wp-load.php");
+
+if (!is_user_logged_in()) {
+    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    wp_redirect(wp_login_url($actual_link));
+    die();
+}
 if (!file_exists('config/config.php')) {
     http_response_code(500);
     die("<h1>Config file missing</h1><p>Please ensure you have created your config file (<code>config/config.php</code>).</p>");
@@ -127,34 +134,21 @@ if ($blockIframe) {
     <script src="static/js/vendor/modernizr.custom.js"></script>
     <!-- Toastr -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script>
+        <?php
+            $is = 'false';
+            if(current_user_can('manage_options')) {
+                $is = 'true';
+            }
+        ?>
+        var isAdmin = <?php echo $is;?>;
+    </script>
 </head>
 <body id="top">
 <div class="wrapper">
     <!-- Header -->
     <header id="header">
         <a href="#nav"><span class="label"><?php echo i8ln('Options') ?></span></a>
-
-        <h1><a href="#"><?= $title ?></a></h1>
-        <?php
-        if ($discordUrl != "") {
-            echo '<a href="' . $discordUrl . '" target="_blank" style="margin-bottom: 5px; vertical-align: middle;padding:0 5px;">
-            <img src="static/images/discord.png" border="0" style="float: right;">
-        </a>';
-        }
-        if ($paypalUrl != "") {
-            echo '<a href="' . $paypalUrl . '" target="_blank" style="margin-bottom: 5px; vertical-align: middle; padding:0 5px;">
-            <img src="https://www.paypalobjects.com/webstatic/en_US/i/btn/png/btn_donate_74x21.png" border="0" name="submit"
-                 title="PayPal - The safer, easier way to pay online!" alt="Donate" style="float: right;">
-        </a>';
-        }
-        ?>
-        <?php if (!$noWeatherOverlay) {
-            ?>
-            <div id="currentWeather"></div>
-            <?php
-        } ?>
-        <a href="#stats" id="statsToggle" class="statsNav" style="float: right;"><span
-                class="label"><?php echo i8ln('Stats') ?></span></a>
     </header>
     <!-- NAV -->
     <nav id="nav">
@@ -848,48 +842,20 @@ if ($blockIframe) {
                 </button>
             </center>
         </div>
+        <div>
+            <center><a href="#stats" class="btn btn-primary statsNav" id="statsToggle">Stats</a></center>
+        </div>
+        <div>
+            <center><a href="<?php echo wp_logout_url(); ?>" class="btn btn-primary">Logout</a></center>
+        </div>
     </nav>
     <nav id="stats">
+        <i class="fa fa-times" aria-hidden="true" onclick="$('#stats').removeClass('visible');"></i>
+        <h4 style="text-align:center">Most Raid Submissions</h4>
         <div class="switch-container">
-            <?php
-            if ($worldopoleUrl !== "") {
-                ?>
-                <div class="switch-container">
-                    <div>
-                        <center><a href="<?= $worldopoleUrl ?>">Full Stats</a></center>
-                    </div>
-                </div>
-                <?php
-            }
-            ?>
-            <div class="switch-container">
-                <center><h1 id="stats-ldg-label"><?php echo i8ln('Loading') ?>...</h1></center>
-            </div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-pkmn-label"></h1></center>
-            </div>
-            <div id="pokemonList" style="color: black;">
-                <table id="pokemonList_table" class="display" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th><?php echo i8ln('Icon') ?></th>
-                        <th><?php echo i8ln('Name') ?></th>
-                        <th><?php echo i8ln('Count') ?></th>
-                        <th>%</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div id="pokeStatStatus" style="color: black;"></div>
-            </div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-gym-label"></h1></center>
-            </div>
-            <div id="arenaList" style="color: black;"></div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-pkstop-label"></h1></center>
-            </div>
-            <div id="pokestopList" style="color: black;"></div>
+           <table id="top-submitters">
+
+           </table>
         </div>
     </nav>
     <nav id="gym-details">
@@ -924,6 +890,11 @@ if ($blockIframe) {
                     <ul id="pokestop-search-results" class="search-results pokestop-results"></ul>
                 </div>
             </div>
+
+        </div>
+    </div>
+    <div class="admin-modal">
+        <div class="admin-raid-results">
 
         </div>
     </div>

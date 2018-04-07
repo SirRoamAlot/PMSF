@@ -1,4 +1,12 @@
 <?php
+require_once(dirname(dirname(__FILE__)) . "/wp-load.php");
+
+if (!is_user_logged_in()) {
+    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    wp_redirect(wp_login_url($actual_link));
+    die();
+}
+$current_user = wp_get_current_user();
 $timing['start'] = microtime(true);
 include('config/config.php');
 global $map, $fork, $db, $raidBosses, $webhookUrl, $sendWebhook;
@@ -51,7 +59,8 @@ $cols = [
     'cp' => 0,
     'pokemon_id' => 0,
     'move_1' => 0, // struggle
-    'move_2' => 0
+    'move_2' => 0,
+    'username' => $current_user->user_login
 
 ];
 if (array_key_exists($pokemonId, $raidBosses)) {
@@ -73,6 +82,10 @@ if (array_key_exists($pokemonId, $raidBosses)) {
 }
 $db->query('DELETE FROM raids WHERE fort_id = :gymId', [':gymId' => $gymId]);
 $db->insert("raids", $cols);
+
+$cols['user_id'] = $current_user->ID;
+$cols['timestamp'] = time();
+$db->insert("raids_info", $cols);
 
 // also update fort_sightings so PMSF knows the gym has changed
 // todo: put team stuff in here too

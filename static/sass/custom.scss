@@ -1,0 +1,128 @@
+#map{top:0!important;}
+#header{width:60px!important}
+#header a{width:100%!important;text-align:center;}
+#header>a[href="#nav"]:before{margin:0!important;}
+#nav{background:rgba(255,255,255,0.8)!important}
+#gym-details, #stats{top:0!important;height:100%!important;}
+#header h1{display:none;}
+#header #statsToggle{display:none;}
+#header .label, #team-gyms-only-wrapper,#open-gyms-only-wrapper,#min-level-gyms-filter-wrapper,#max-level-gyms-filter-wrapper,#last-update-gyms-wrapper{display:none;}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li{width:100%;}
+.donate-link {
+    display: block!important;
+    background: #ef6e00!important;
+    text-align: center!important;
+}
+.bottom-buttons div {
+    width: 50%;
+    floaT: left;
+}
+.bottom-buttons div:nth-child(2n +1) {
+    clear: left;
+}
+#stats .fa-times {
+    color: #000000;
+    position: absolute;
+    top: 0;
+    right: 3px;
+    font-size: 30px;
+    cursor: pointer;
+}
+#top-submitters{
+        border: 1px solid #FFFFFF;
+        width: 100%;
+        text-align: center;
+        border-collapse: collapse;
+     td,  th {
+        border: 1px solid #FFFFFF;
+        padding: 3px 2px;
+    }
+     tbody td {
+        font-size: 13px;
+         color:#000000;
+    }
+     tr:nth-child(even) {
+        background: #D0E4F5;
+    }
+     thead {
+        background: #0B6FA4;
+        border-bottom: 5px solid #FFFFFF;
+    }
+     thead th {
+        font-size: 17px;
+        font-weight: bold;
+        color: #FFFFFF;
+        text-align: center;
+        border-left: 2px solid #FFFFFF;
+    }
+     thead th:first-child {
+        border-left: none;
+    }
+
+     tfoot {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333333;
+        background: #D0E4F5;
+        border-top: 3px solid #444444;
+    }
+     tfoot td {
+        font-size: 14px;
+    }
+}
+
+
+.weather-icons div{display:flex;align-items:center;margin-bottom:5px;}
+/*.weather-icons label div:nth-child(1) img{border-radius:50%;background:#FF1131}
+.weather-icons label div:nth-child(2) img{border-radius:50%;background:#11F0FF}
+.weather-icons label div:nth-child(3) img{border-radius:50%;background:#EBA10D}
+.weather-icons label div:nth-child(4) img{border-radius:50%;background:#B811FF}
+.weather-icons label div:nth-child(5) img{border-radius:50%;background:#FF11E8}
+.weather-icons label div:nth-child(6) img{border-radius:50%;background:#EBEB0D}
+.weather-icons label div:nth-child(7) img{border-radius:50%;background:#0DEB39}*/
+#nav #pokemon-filter-wrapper .min-stats-row{margin-bottom:10px;}
+.weather-icons div img{max-width:32px;}
+.donate-link a{color: #000!important;text-decoration: none!important;display: block!important; padding: 10px!important;}
+.donate-link a:hover{background:#3b3b3b!important;color:#FFF!important;}
+.btn.btn-primary{display: block!important; width: 150px!important;background: rgb(160, 15, 15)!important;padding: 5px 0!important;color: rgb(255, 255, 255)!important;TEXT-DECORATION: NONE!important; font-size: 14px!important;margin-top: 15px!important; border-radius: 5px!important;}
+.statsNav.btn.btn-primary{background:rgb(25, 154, 64)!important}
+/*#gym-details .team-2-text:nth-child(2){display:none;}
+#gym-details .team-0-text:nth-child(2){display:none;}
+#gym-details .team-1-text:nth-child(2){display:none;}
+#gym-details .team-3-text:nth-child(2){display:none;}*/
+#lured-pokestops-only-wrapper{display:none!important;}
+.search-modal-button{top:3.5em!important;}
+span#currentWeather {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    background: #3b3b3b;
+    text-align: center;
+    max-height: 60px;
+}
+span#currentWeather img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+#ui-id-2 .select2{display:none!important;}
+#ui-id-2 > div > label > div{max-height:300px!important;}
+#ui-id-2 > div > label > div > ul{padding:0}
+#ui-id-2 > div > label > div > ul li{list-style:none;width:20%;float:left;display:block;margin-bottom:2px;}
+#ui-id-2 > div > label > div > ul li img{max-width:100%}
+#ui-id-2 > div > label > div > ul li .selected{border:2px solid red;}
+#ui-id-2 > div > label > div > ul li:nth-child(5n + 1) {clear: left;}
+#ui-id-2 > div > label > div > ul li:nth-child(1n + 387) {display: none;}
+@media screen and (max-width: 480px){
+    #header {
+        min-width:50px!important;
+        width: 50px!important;
+        text-align: center!important;
+    }
+    nav{
+        width:100%!important;
+        max-width:480px!important;
+    }
+}

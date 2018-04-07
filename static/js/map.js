@@ -627,6 +627,10 @@ function gymLabel(item) {
     var raidStr = ''
     var raidIcon = ''
     var i = 0
+    var adminStr = ''
+    if(isAdmin){
+        adminStr = '<i class="fa fa-lock" style="font-size:24px;margin-left: 20px;margin-top: 5px;margin-bottom: 5px;" aria-hidden="true" onclick="getAdminModal(event);" data-id="' + item['gym_id'] + '"></i>'
+    }
     if (raidSpawned && item.raid_end > Date.now()) {
         var levelStr = ''
         for (i = 0; i < item['raid_level']; i++) {
@@ -665,8 +669,9 @@ function gymLabel(item) {
             }
             raidIcon = '<img src="static/raids/egg_' + raidEgg + '.png">'
         }
+        raidStr += '<div class="reported-by">Reported By: ' + item['username'] + '</div>'
     }
-    raidStr += '<div class="raid-container"><i class="fa fa-binoculars submit-raid" onclick="openRaidModal(event);" data-id="' + item['gym_id'] + '"></i>' +
+    raidStr += '<div class="raid-container"><i class="fa fa-binoculars submit-raid" onclick="openRaidModal(event);" data-id="' + item['gym_id'] + '"></i>' + adminStr +
         '</div>'
 
     var park = ''
@@ -719,13 +724,6 @@ function gymLabel(item) {
             '<div>' +
             i8ln('Location') + '<a href="javascript:void(0);" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ');" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ' , ' + longitude.toFixed(7) + '</a>' +
             '</div>' +
-            '<div>' +
-
-            i8ln('Last Modified') + ' : ' + lastModifiedStr +
-            '</div>' +
-            '<div>' +
-            lastScannedStr +
-            '</div>' +
             '</center>' +
             '</div>'
     } else {
@@ -758,13 +756,6 @@ function gymLabel(item) {
             '</div>' +
             '<div>' +
             i8ln('Location') + ' : <a href="javascript:void(0);" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ');" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ' , ' + longitude.toFixed(7) + '</a>' +
-            '</div>' +
-            '<div>' +
-
-            i8ln('Last Modified') + ' : ' + lastModifiedStr +
-            '</div>' +
-            '<div>' +
-            lastScannedStr +
             '</div>' +
             '</center>' +
             '</div>'
@@ -1761,6 +1752,140 @@ function manualRaidData(event) { // eslint-disable-line no-unused-vars
     }
 }
 
+function timeConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = year + '-' + month + '-' + date + ' ' + hour + ':' + min + ':' + sec;
+    return time;
+}
+
+function getRaidSubmitters(){
+    $.ajax({
+        url: 'raid_stats.php',
+        type: 'POST',
+        timeout: 300000,
+        dataType: 'json',
+        cache: false,
+        error: function error() {
+            // Display error toast
+            toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error getting raid stats'))
+            toastr.options = {
+                'closeButton': true,
+                'debug': false,
+                'newestOnTop': true,
+                'progressBar': false,
+                'positionClass': 'toast-top-right',
+                'preventDuplicates': true,
+                'onclick': null,
+                'showDuration': '300',
+                'hideDuration': '1000',
+                'timeOut': '25000',
+                'extendedTimeOut': '1000',
+                'showEasing': 'swing',
+                'hideEasing': 'linear',
+                'showMethod': 'fadeIn',
+                'hideMethod': 'fadeOut'
+            }
+        },
+    }).done(function (data) {
+        if (data) {
+            var res = jQuery('#top-submitters')
+            res.html('')
+            var html = '';
+            html += '<thead><tr><th style="padding:0">Place</th><th style="padding:0">Username</th><th style="padding:0">#</th></tr></thead><tbody>'
+            var z = 1
+            data.forEach(function (element) {
+                html += '<tr>'
+                html += '<td>' + z + '</td><td>' + element.username + '</td>' + '<td>' + element.count + '</td>'
+                html += '</tr>'
+
+                z += 1
+            })
+            html += '</tbody>'
+            res.append(html)
+        }
+    })
+}
+
+function getAdminModal(event){
+    $(".ui-dialog").remove();
+    var gym = $(event.target).data('id');
+    var modal = $('.admin-modal');
+    var wwidth = $(window).width()
+    var width = 300
+    if(wwidth > 768){
+        width = 500
+    }
+    modal.clone().dialog({
+        autoOpen: true,
+        resizable: false,
+        draggable:false,
+        modal: true,
+        title: "Past Raid Submits",
+        classes: {
+            "ui-dialog" : "ui-dialog admin-widget-popup"
+        },
+        width:width,
+        buttons: {},
+        open: function( event, ui ) {
+            $.ajax({
+                url: 'admin.php',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'gymId': gym,
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error getting admin'))
+                    toastr.options = {
+                        'closeButton': true,
+                        'debug': false,
+                        'newestOnTop': true,
+                        'progressBar': false,
+                        'positionClass': 'toast-top-right',
+                        'preventDuplicates': true,
+                        'onclick': null,
+                        'showDuration': '300',
+                        'hideDuration': '1000',
+                        'timeOut': '25000',
+                        'extendedTimeOut': '1000',
+                        'showEasing': 'swing',
+                        'hideEasing': 'linear',
+                        'showMethod': 'fadeIn',
+                        'hideMethod': 'fadeOut'
+                    }
+                },
+            }).done(function (data) {
+                if (data) {
+                    var res = jQuery('.admin-widget-popup .admin-raid-results')
+                    res.html('')
+                    var html = '';
+                    html += '<table><tr><th style="padding:0">Date</th><th style="padding:0">Pokemon ID</th><th style="padding:0">Username</th></tr>'
+                    var z = 1
+                    data.forEach(function (element) {
+                        html += '<tr>'
+                        html += '<td>' + z + '. ' + timeConverter(element.timestamp) + '</td>' + '<td>' + element.pokemon_id + '</td>' + '<td>' + element.username + '</td>'
+                        html += '</tr>'
+
+                        z += 1
+                    })
+                    html += '</table>'
+                    res.append(html)
+                }
+            })
+        }
+    })
+}
+
 function openRaidModal(event) { // eslint-disable-line no-unused-vars
     $(".ui-dialog").remove();
     var val = $(event.target).data('id')
@@ -2151,9 +2276,6 @@ function updateMap() {
         updateSpawnPoints()
         updatePokestops()
 
-        if ($('#stats').hasClass('visible')) {
-            countMarkers(map)
-        }
 
         oSwLat = result.oSwLat
         oSwLng = result.oSwLng
@@ -2674,6 +2796,7 @@ function showGymDetails(id) { // eslint-disable-line no-unused-vars
                 }
                 raidIcon = '<img src="static/raids/egg_' + raidEgg + '.png">'
             }
+            raidStr += '<div class="reported-by">Reported By: ' + result['username'] + '</div>'
         }
         raidStr += '<i class="fa fa-binoculars submit-raid" onclick="$(this).toggleClass(\'open\');$(\'.raid-report\').slideToggle()" ></i>'
         raidStr += '<div class="raid-report">'
@@ -2707,10 +2830,6 @@ function showGymDetails(id) { // eslint-disable-line no-unused-vars
             '<div>' +
             park +
             '</div>' +
-            '<div style="font-size: .7em">' +
-            i8ln('Last Modified') + ' : ' + lastModifiedStr +
-            '</div>' +
-            lastScannedStr +
             '<div>' +
             '<a href=\'javascript:void(0)\' onclick=\'javascript:openMapDirections(' + result.latitude + ',' + result.longitude + ')\' title=\'' + i8ln('View in Maps') + '\'>' + i8ln('Get directions') + '</a>' +
             '</div>' +
@@ -2964,6 +3083,7 @@ $(function () {
         $(this).closest('#dialog_edit').dialog('close')
     })
     $('.global-raid-modal').html(generateRaidModal());
+    getRaidSubmitters()
 })
 
 $(function () {

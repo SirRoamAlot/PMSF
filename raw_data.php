@@ -1,4 +1,11 @@
 <?php
+require_once(dirname(dirname(__FILE__)) . "/wp-load.php");
+
+if (!is_user_logged_in()) {
+    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    wp_redirect(wp_login_url($actual_link));
+    die();
+}
 $timing['start'] = microtime(true);
 include('config/config.php');
 global $map, $fork;
