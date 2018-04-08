@@ -1629,7 +1629,7 @@ function searchAjax(field) { // eslint-disable-line no-unused-vars
     var type = field.data('type')
     if (term !== '') {
         $.ajax({
-            url: 'search',
+            url: 'search.php',
             type: 'POST',
             timeout: 300000,
             dataType: 'json',
