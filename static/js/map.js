@@ -552,6 +552,7 @@ function pokemonLabel(item) {
     var atk = item['individual_attack']
     var def = item['individual_defense']
     var sta = item['individual_stamina']
+    var user = item['username'];
     var pMove1 = moves[item['move_1']] !== undefined ? i8ln(moves[item['move_1']]['name']) : 'gen/unknown'
     var pMove2 = moves[item['move_2']] !== undefined ? i8ln(moves[item['move_2']]['name']) : 'gen/unknown'
     var weight = item['weight']
@@ -644,6 +645,9 @@ function pokemonLabel(item) {
             ' <span class="label-countdown" disappears-at="' + disappearTime + '">(00m00s)</span>' +
             '</div>'
     }
+    contentstring += '<div>' +
+        i8ln('Reported by:') + ' ' + user +
+        '</div>'
 
     contentstring += '<div>' +
         i8ln('Location') + ': <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + latitude + ', ' + longitude + ')" title="' + i8ln('View in Maps') + '">' + coordText + '</a>' +

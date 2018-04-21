@@ -150,7 +150,8 @@ if($action === "raid"){
             'pokemon_id' => $id,
             'expire_timestamp' => time() + 1800,
             'updated' => time(),
-            'weather_boosted_condition' => 0
+            'weather_boosted_condition' => 0,
+            'username' => $current_user->user_login
         ];
         $db->insert("sightings", $cols);
     }
