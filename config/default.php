@@ -213,10 +213,18 @@ $raidApiKey = '';                                                   // Raid API 
 $sendRaidData = false;                                              // Send Raid data, false to only send gym data
 
 //-----------------------------------------------------
-// Raids
+// Manual Submissions
 //-----------------------------------------------------
 
-$raidBosses = [1,4,7,355,129,361,333,49,89,103,108,110,200,303,65,68,94,95,123,139,141,142,365,306,76,112,131,143,248,359,381,150];
+$noManualRaids = false;
+$noManualPokemon = false;
+$noManualGyms = false;
+$noManualPokestops = false;
+
+$pokemonReportTime = true;
+$pokemonToExclude = [];
+
+$raidBosses = [361,355,353,333,129,303,302,215,200,103,221,210,127,124,94,68,365,359,306,248,229,381,150];
 
 $sendWebhook = false;
 $webhookUrl = null;
@@ -227,6 +235,12 @@ $manualFiveStar = [
     'move_1' => 133,
     'move_2' => 133
 ];
+
+//-----------------------------------------------
+// Search
+//-----------------------------------------------------
+
+$noSearch = false;
 
 //-----------------------------------------------------
 // Areas

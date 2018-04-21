@@ -1,13 +1,27 @@
 <?php
 include(dirname(__FILE__) . '/config/config.php');
-global $map, $fork, $db, $raidBosses, $webhookUrl, $sendWebhook, $manualFiveStar;
-// get all level 5 raids that are still eggs but haven't hatched
+global $map, $fork, $db, $raidBosses, $webhookUrl, $sendWebhook, $manualFiveStar, $noManualRaids, $noRaids;
 
-$eggs = $db->query("
+if($noManualRaids === true || $noRaids === true){
+    http_response_code(401);
+    die();
+}
+
+if($db->info()['driver'] == 'pgsql'){
+    $eggs = $db->query("
+    SELECT * FROM raids
+    LEFT JOIN forts ON raids.fort_id = forts.id
+    WHERE time_battle < :time_battle AND time_end > :time_battle AND pokemon_id = 0 AND level = 5
+", [':time_battle'=>time()])->fetchAll(PDO::FETCH_ASSOC);
+}
+else{
+    $eggs = $db->query("
     SELECT * FROM raids
     LEFT JOIN forts ON raids.`fort_id` = forts.id
     WHERE time_battle < :time_battle AND time_end > :time_battle AND pokemon_id = 0 AND level = 5
 ", [':time_battle'=>time()])->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
 if (count($eggs) > 0) {
     $fort_ids = [];
