@@ -1660,7 +1660,7 @@ function manualPokestopData(event) { // eslint-disable-line no-unused-vars
     if (pokestopName && pokestopName !== '') {
         if (confirm('I confirm this is an accurate reporting of a new pokestop')) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
@@ -1694,7 +1694,7 @@ function manualGymData(event) { // eslint-disable-line no-unused-vars
     if (gymName && gymName !== '') {
         if (confirm('I confirm this is an accurate reporting of a new gym')) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
@@ -1727,7 +1727,7 @@ function manualPokemonData(event) { // eslint-disable-line no-unused-vars
     if (id && id !== '') {
         if (confirm('I confirm this is an accurate reporting of a new pokemon')) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
@@ -1762,7 +1762,7 @@ function manualRaidData(event) { // eslint-disable-line no-unused-vars
     if (pokemonId && pokemonId !== '' && gymId && gymId !== '' && eggTime && eggTime !== '' && monTime && monTime !== '') {
         if (confirm('I confirm this is an accurate sighting of a raid')) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
