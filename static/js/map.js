@@ -724,6 +724,9 @@ function gymLabel(item) {
         raidStr += '<div class="raid-container"><i class="fa fa-binoculars submit-raid" onclick="openRaidModal(event);" data-id="' + item['gym_id'] + '"></i>' +
             '</div>'
     }
+    if (!noDeleteGyms) {
+        raidStr += '<i class="fa fa-trash-o delete-gym" onclick="deleteGym(event);" data-id="' + item['gym_id'] + '"></i>'
+    }
 
     var park = ''
     if ((item['park'] !== 'None' && item['park'] !== undefined && item['park']) && (noParkInfo === false)) {
@@ -805,7 +808,7 @@ function gymLabel(item) {
     return str
 }
 
-function pokestopLabel(expireTime, latitude, longitude, stopName, lureUser) {
+function pokestopLabel(expireTime, latitude, longitude, stopName, lureUser, id) {
     var str
     if (stopName === undefined) {
         stopName = 'Pokéstop'
@@ -834,12 +837,14 @@ function pokestopLabel(expireTime, latitude, longitude, stopName, lureUser) {
         str =
             '<div>' +
             '<b>' + stopName + '</b>' +
-            '</div>' +
+        '</div>' +
             '<div>' +
             'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ')" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ', ' + longitude.toFixed(7) + '</a>' +
             '</div>'
+        if (!noDeletePokestops) {
+            str += '<i class="fa fa-trash-o delete-pokestop" onclick="deletePokestop(event);" data-id="' + id + '"></i>'
+        }
     }
-
     return str
 }
 
@@ -1227,7 +1232,7 @@ function setupPokestopMarker(item) {
     }
 
     marker.infoWindow = new google.maps.InfoWindow({
-        content: pokestopLabel(item['lure_expiration'], item['latitude'], item['longitude'], item['pokestop_name'], item['lure_user']),
+        content: pokestopLabel(item['lure_expiration'], item['latitude'], item['longitude'], item['pokestop_name'], item['lure_user'], item['pokestop_id']),
         disableAutoPan: true
     })
 
@@ -1662,7 +1667,7 @@ function manualPokestopData(event) { // eslint-disable-line no-unused-vars
     var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
     var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
     if (pokestopName && pokestopName !== '') {
-        if (confirm('I confirm this is an accurate reporting of a new pokestop')) {
+        if (confirm(i8ln('I confirm this is an accurate reporting of a new pokestop'))) {
             return $.ajax({
                 url: 'submit.php',
                 type: 'POST',
@@ -1696,7 +1701,7 @@ function manualGymData(event) { // eslint-disable-line no-unused-vars
     var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
     var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
     if (gymName && gymName !== '') {
-        if (confirm('I confirm this is an accurate reporting of a new gym')) {
+        if (confirm(i8ln('I confirm this is an accurate reporting of a new gym'))) {
             return $.ajax({
                 url: 'submit.php',
                 type: 'POST',
@@ -1729,7 +1734,7 @@ function manualPokemonData(event) { // eslint-disable-line no-unused-vars
     var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
     var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
     if (id && id !== '') {
-        if (confirm('I confirm this is an accurate reporting of a new pokemon')) {
+        if (confirm(i8ln('I confirm this is an accurate reporting of a new pokemon'))) {
             return $.ajax({
                 url: 'submit.php',
                 type: 'POST',
@@ -1756,6 +1761,64 @@ function manualPokemonData(event) { // eslint-disable-line no-unused-vars
         }
     }
 }
+function deleteGym(event) { // eslint-disable-line no-unused-vars
+    var button = $(event.target)
+    var gymId = button.data('id')
+    if (gymId && gymId !== '') {
+        if (confirm(i8ln('I confirm that I want to delete this gym. This is a permanent deleture'))) {
+            return $.ajax({
+                url: 'submit',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'action': 'delete-gym',
+                    'id': gymId
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error Deleting Gym'))
+                    toastr.options = toastrOptions
+                },
+                complete: function complete() {
+                    jQuery('label[for="gyms-switch"]').click()
+                    jQuery('label[for="gyms-switch"]').click()
+                    jQuery('#gym-details').removeClass('visible')
+                }
+            })
+        }
+    }
+}
+function deletePokestop(event) { // eslint-disable-line no-unused-vars
+    var button = $(event.target)
+    var pokestopId = button.data('id')
+    if (pokestopId && pokestopId !== '') {
+        if (confirm(i8ln('I confirm that I want to delete this pokestop. This is a permanent deleture'))) {
+            return $.ajax({
+                url: 'submit',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'action': 'delete-pokestop',
+                    'id': pokestopId
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error Deleting Pokestop'))
+                    toastr.options = toastrOptions
+                },
+                complete: function complete() {
+                    jQuery('label[for="pokestops-switch"]').click()
+                    jQuery('label[for="pokestops-switch"]').click()
+                }
+            })
+        }
+    }
+}
+
 
 function manualRaidData(event) { // eslint-disable-line no-unused-vars
     var form = $(event.target).parent().parent()
@@ -1764,7 +1827,7 @@ function manualRaidData(event) { // eslint-disable-line no-unused-vars
     var monTime = form.find('[name="mon_time"]').val()
     var eggTime = form.find('[name="egg_time"]').val()
     if (pokemonId && pokemonId !== '' && gymId && gymId !== '' && eggTime && eggTime !== '' && monTime && monTime !== '') {
-        if (confirm('I confirm this is an accurate sighting of a raid')) {
+        if (confirm(i8ln('I confirm this is an accurate sighting of a raid'))) {
             return $.ajax({
                 url: 'submit.php',
                 type: 'POST',
@@ -2023,8 +2086,8 @@ function generateTimerLists() {
         '<option value="3">3</option>' +
         '<option value="2">2</option>' +
         '<option value="1">1</option>' +
-    '</select>' +
-    '<select name="mon_time" class="mon_time" style="display:none;">' +
+        '</select>' +
+        '<select name="mon_time" class="mon_time" style="display:none;">' +
         '<option value="45" selected>45</option>' +
         '<option value="44">44</option>' +
         '<option value="43">43</option>' +
@@ -2070,7 +2133,7 @@ function generateTimerLists() {
         '<option value="3">3</option>' +
         '<option value="2">2</option>' +
         '<option value="1">1</option>' +
-    '</select>'
+        '</select>'
     return html
 }
 function openSearchModal(event) { // eslint-disable-line no-unused-vars
@@ -2949,6 +3012,9 @@ function showGymDetails(id) { // eslint-disable-line no-unused-vars
                 raidIcon = '<img src="static/raids/egg_' + raidEgg + '.png">'
             }
             raidStr += '<div class="reported-by">Reported By: ' + result['username'] + '</div>'
+        }
+        if (!noDeleteGyms) {
+            raidStr += '<i class="fa fa-trash-o delete-gym" onclick="deleteGym(event);" data-id="' + id + '"></i>'
         }
         if (manualRaids) {
             raidStr += '<i class="fa fa-binoculars submit-raid" onclick="$(this).toggleClass(\'open\');$(\'.raid-report\').slideToggle()" ></i>'
