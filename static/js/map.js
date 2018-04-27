@@ -1799,7 +1799,7 @@ function deleteGym(event) { // eslint-disable-line no-unused-vars
     if (gymId && gymId !== '') {
         if (confirm(i8ln('I confirm that I want to delete this gym. This is a permanent deleture'))) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
@@ -1828,7 +1828,7 @@ function deletePokestop(event) { // eslint-disable-line no-unused-vars
     if (pokestopId && pokestopId !== '') {
         if (confirm(i8ln('I confirm that I want to delete this pokestop. This is a permanent deleture'))) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
@@ -1859,7 +1859,7 @@ function manualQuestData(event) { // eslint-disable-line no-unused-vars
     if (pokestopId && pokestopId !== '') {
         if (confirm(i8ln('I confirm this is an accurate sighting of a quest'))) {
             return $.ajax({
-                url: 'submit',
+                url: 'submit.php',
                 type: 'POST',
                 timeout: 300000,
                 dataType: 'json',
