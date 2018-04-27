@@ -187,12 +187,17 @@ if ($action === "raid") {
         $cols = [
             'quest_id' => $questId,
             'reward' => $reward,
+            'username' => $current_user->user_login
         ];
         $where = [
             'external_id' => $pokestopId
         ];
         $db->update("pokestops", $cols, $where);
+        $cols['time'] = time();
+        $cols['username'] = $current_user->user_login;
+        $db->insert('quest_log',$cols);
     }
+
 } elseif ($action === "pokestop") {
     if ($noManualPokestops === true || $noPokestops === true) {
         http_response_code(401);

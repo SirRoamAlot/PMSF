@@ -182,7 +182,7 @@ class Monocle_Alternate extends Monocle
         lat AS latitude,
         lon AS longitude";
         if (!$noManualQuests) {
-            $query .= ",quest_id,reward";
+            $query .= ",quest_id,reward,username";
         }
         $query .= " FROM pokestops
         WHERE :conditions";
