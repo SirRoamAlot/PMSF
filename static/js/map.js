@@ -1295,6 +1295,7 @@ function nestLabel(item) {
         '</div>' +
         '<div>' +
     'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + item.lat + ',' + item.lon + ')" title="' + i8ln('View in Maps') + '">' + item.lat.toFixed(6) + ', ' + item.lon.toFixed(7) + '</a>' +
+            '<br /><em>provided by Silph Road</em>' +
     '</div>'
     return str
 }

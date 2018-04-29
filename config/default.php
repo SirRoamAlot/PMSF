@@ -104,7 +104,7 @@ $noBigKarp = false;                                                 // true/fals
 $noTinyRat = false;                                                 // true/false
 
 $noNests = false;                                                   // true/false
-$enableNests = 'false';                                             // true/false
+$enableNests = 'true';                                             // true/false
 
 $noGyms = false;                                                    // true/false
 $enableGyms = 'false';                                              // true/false
