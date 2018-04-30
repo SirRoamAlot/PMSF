@@ -1268,6 +1268,7 @@ function setupNestMarker(item){
     var str = '<div class="marker-nests">' +
        '<img src="static/images/nest-' + item.pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
         '<i class="nest-pokemon-sprite n' + item.pokemon_id + '"></i>' +
+            '<div>Referenced from https://thesilphroad.com/</div>' +
         '</div>'
     var marker = new RichMarker({
         position: new google.maps.LatLng(item['lat'], item['lon']),
