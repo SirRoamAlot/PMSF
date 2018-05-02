@@ -345,8 +345,6 @@ function initMap() { // eslint-disable-line no-unused-vars
 
     map.addListener('click', function (e) {
         if ($('.submit-on-off-button').hasClass('on')) {
-            console.log(e.latLng.lat())
-            console.log(e.latLng.lng())
             $('.submitLatitude').val(e.latLng.lat())
             $('.submitLongitude').val(e.latLng.lng())
             $('.ui-dialog').remove()
@@ -1265,11 +1263,18 @@ function setupPokestopMarker(item) {
     return marker
 }
 function setupNestMarker(item){
-    var str = '<div class="marker-nests">' +
-       '<img src="static/images/nest-' + item.pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
-        '<i class="nest-pokemon-sprite n' + item.pokemon_id + '"></i>' +
-            '<div>Referenced from https://thesilphroad.com/</div>' +
-        '</div>'
+    if(item.pokemon_id > 0){
+        var str = '<div class="marker-nests">' +
+            '<img src="static/images/nest-' + item.pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
+            '<i class="nest-pokemon-sprite n' + item.pokemon_id + '"></i>' +
+            '</div>'
+    }
+    else{
+        var str = '<div class="marker-nests">' +
+            '<img src="static/images/nest-empty.png" style="width:36px;height: auto;"/>' +
+            '</div>'
+    }
+
     var marker = new RichMarker({
         position: new google.maps.LatLng(item['lat'], item['lon']),
         map: map,
@@ -1290,22 +1295,35 @@ function setupNestMarker(item){
 
 
 function nestLabel(item) {
-    var types = item['pokemon_types']
-    var typesDisplay = ''
-    $.each(types, function (index, type) {
-        typesDisplay += getTypeSpan(type)
-    })
-    var str =
-        '<div>' +
-        '<b>' + item.pokemon_name + ' Nest</b>' +
-        '</div>' +
+
+    var str = '<div>';
+    if (item.pokemon_id > 0) {
+        var types = item['pokemon_types']
+        var typesDisplay = ''
+        $.each(types, function (index, type) {
+            typesDisplay += getTypeSpan(type)
+        })
+        str += '<b>' + item.pokemon_name  + '</b>' +
+            '</div>' +
             '<div>' +
-        typesDisplay +
-        '</div>' +
-        '<div>' +
+            typesDisplay +
+            '</div>'
+    } else {
+        str += '<b>' + i8ln('No Pokemon - Assign One Below') + '</b>'
+    }
+    str += '<div style="margin-bottom:5px;">' +
     'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + item.lat + ',' + item.lon + ')" title="' + i8ln('View in Maps') + '">' + item.lat.toFixed(6) + ', ' + item.lon.toFixed(7) + '</a>' +
             '<br /><em>provided by Silph Road</em>' +
     '</div>'
+    if (!noDeleteNests) {
+        str += '<i class="fa fa-trash-o delete-nest" onclick="deleteNest(event);" data-id="' + item['nest_id'] + '"></i>'
+    }
+    if (!noManualNests) {
+        str += '<i class="fa fa-binoculars submit-nest" onclick="openNestModal(event);" data-id="' + item['nest_id'] + '"></i>'
+    }
+    if(item.type === 1){
+        str += '<div>' + i8ln('As found on thesilphroad.com') + '</div>'
+    }
     return str
 }
 
@@ -1903,6 +1921,105 @@ function deletePokestop(event) { // eslint-disable-line no-unused-vars
     }
 }
 
+function deleteNest(event) { // eslint-disable-line no-unused-vars
+    var button = $(event.target)
+    var nestid = button.data('id')
+    if (nestid && nestid !== '') {
+        if (confirm(i8ln('I confirm that I want to delete this nest. This is a permanent deleture'))) {
+            return $.ajax({
+                url: 'submit.php',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'action': 'delete-nest',
+                    'nestId': nestid
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error Deleting nest'))
+                    toastr.options = toastrOptions
+                },
+                complete: function complete() {
+                    jQuery('label[for="nests-switch"]').click()
+                    jQuery('label[for="nests-switch"]').click()
+                }
+            })
+        }
+    }
+}
+
+function submitNewNest(event) { // eslint-disable-line no-unused-vars
+    var cont = $(event.target).parent().parent()
+    var id = cont.find( '.pokemonID' ).val()
+    var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
+    var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
+    if (lat && lat !== '' && lng && lng !== '') {
+        if (confirm(i8ln('I confirm this is an new nest'))) {
+            return $.ajax({
+                url: 'submit.php',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'action': 'new-nest',
+                    'lat': lat,
+                    'lng': lng,
+                    'id' : id
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error Submitting Nest'))
+                    toastr.options = toastrOptions
+                },
+                complete: function complete() {
+                    lastnests = false
+                    updateMap()
+                    jQuery('label[for="nests-switch"]').click()
+                    jQuery('label[for="nests-switch"]').click()
+                    $('.ui-dialog-content').dialog('close')
+                }
+            })
+        }
+    }
+}
+
+function manualNestData(event) { // eslint-disable-line no-unused-vars
+    var cont = $(event.target).parent().parent()
+    var nestId = cont.find('.submitting-nests').data('nest')
+    var pokemonId = cont.find('.pokemonID').val()
+    if (nestId && nestId !== '' && pokemonId && pokemonId !== '') {
+        if (confirm(i8ln('I confirm this is an accurate sighting of a quest'))) {
+            return $.ajax({
+                url: 'submit.php',
+                type: 'POST',
+                timeout: 300000,
+                dataType: 'json',
+                cache: false,
+                data: {
+                    'action': 'nest',
+                    'nestId': nestId,
+                    'pokemonId': pokemonId
+                },
+                error: function error() {
+                    // Display error toast
+                    toastr['error'](i8ln('Please check connectivity or reduce marker settings.'), i8ln('Error Submitting Nest'))
+                    toastr.options = toastrOptions
+                },
+                complete: function complete() {
+                    lastnests = false
+                    updateMap()
+                    jQuery('label[for="nests-switch"]').click()
+                    jQuery('label[for="nests-switch"]').click()
+                    $('.ui-dialog-content').dialog('close')
+                }
+            })
+        }
+    }
+}
+
 function manualQuestData(event) { // eslint-disable-line no-unused-vars
     var cont = $(event.target).parent().parent()
     var questId = cont.find('.questList').val()
@@ -2108,6 +2225,21 @@ function getAdminModal(event){
                     res.append(html)
                 }
             })
+        }
+    })
+}
+
+function openNestModal(event) { // eslint-disable-line no-unused-vars
+    $('.ui-dialog').remove()
+    var val = $(event.target).data('id')
+    $('.submitting-nests').attr('data-nest',val)
+    $('.global-nest-modal').clone().dialog({
+        modal: true,
+        maxHeight: 600,
+        title: i8ln('Submit a Nest'),
+        buttons: {},
+        classes: {
+            'ui-dialog': 'ui-dialog nest-widget-popup'
         }
     })
 }

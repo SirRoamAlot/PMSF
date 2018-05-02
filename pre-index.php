@@ -884,6 +884,18 @@ if ($blockIframe) {
     <div class="global-raid-modal">
 
     </div>
+    <?php if (!$noManualNests) { ?>
+    <div class="global-nest-modal" style="display:none;">
+        <input type="hidden" name="pokemonID" class="pokemonID"/>
+        <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)'); ?>
+        <div class="button-container">
+            <button type="button" onclick="manualNestData(event);" class="submitting-nests"><i
+                    class="fa fa-binoculars"
+                    style="margin-right:10px;"></i><?php echo i8ln('Submit Nest'); ?>
+            </button>
+        </div>
+    </div>
+    <?php } ?>
 
     <?php if (!$noManualQuests) { ?>
         <div class="quest-modal" style="display: none;">
@@ -987,51 +999,46 @@ if ($blockIframe) {
             </div>
         </div>
     <?php } ?>
-    <?php
     if ((!$noPokemon && !$noManualPokemon) || (!$noGyms && !$noManualGyms) || (!$noPokestops && !$noManualPokestops)) {
-    ?>
-    <button class="submit-on-off-button" onclick="$('.submit-on-off-button').toggleClass('on');">
-        <i class="fa fa-map-marker submit-to-map" aria-hidden="true"></i>
-    </button>
-    <div class="submit-modal" style="display:none;">
-        <input type="hidden" value="" name="submitLatitude" class="submitLatitude"/>
-        <input type="hidden" value="" name="submitLongitude" class="submitLongitude"/>
-        <div id="submit-tabs">
-            <ul>
-                <?php if (!$noManualPokemon) {
-                    ?>
-                    <li><a href="#tab-pokemon"><?php echo i8ln('Pokemon'); ?></a></li>
-                <?php } ?>
-                <?php if (current_user_can('manage_options')) {
-                    ?>
+        ?>
+        <button class="submit-on-off-button" onclick="$('.submit-on-off-button').toggleClass('on');">
+            <i class="fa fa-map-marker submit-to-map" aria-hidden="true"></i>
+        </button>
+        <div class="submit-modal" style="display:none;">
+            <input type="hidden" value="" name="submitLatitude" class="submitLatitude"/>
+            <input type="hidden" value="" name="submitLongitude" class="submitLongitude"/>
+            <div id="submit-tabs">
+                <ul>
+                    <?php if (!$noManualPokemon) {
+                        ?>
+                        <li><a href="#tab-pokemon"><img src="static/images/pokeball.png" /></a></li>
+                    <?php } ?>
                     <?php if (!$noManualGyms) {
                         ?>
-                        <li><a href="#tab-gym"><?php echo i8ln('Gym'); ?></a></li>
+                        <li><a href="#tab-gym"><img src="static/forts/ingame/Uncontested.png" /></a></li>
                     <?php } ?>
                     <?php if (!$noManualPokestops) {
                         ?>
-                        <li><a href="#tab-pokestop"><?php echo i8ln('Pokestop'); ?></a></li>
+                        <li><a href="#tab-pokestop"><img src="static/forts/Pstop.png" /></a></li>
                     <?php } ?>
-                    <?php
-                }
-                ?>
-
-            </ul>
-            <?php if (!$noManualPokemon) {
-                ?>
-                <div id="tab-pokemon">
-                    <input type="hidden" name="pokemonID" class="pokemonID"/>
-                    <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)', $pokemonToExclude); ?>
-                    <div class="button-container">
-                        <button type="button" onclick="manualPokemonData(event);" class="submitting-pokemon"><i
-                                class="fa fa-binoculars"
-                                style="margin-right:10px;"></i><?php echo i8ln('Submit Pokemon'); ?>
-                        </button>
+                    <?php if (!$noManualNests) {
+                        ?>
+                        <li><a href="#tab-nests"><img src="static/images/nest.png" /></a></li>
+                    <?php } ?>
+                </ul>
+                <?php if (!$noManualPokemon) {
+                    ?>
+                    <div id="tab-pokemon">
+                        <input type="hidden" name="pokemonID" class="pokemonID"/>
+                        <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)', $pokemonToExclude); ?>
+                        <div class="button-container">
+                            <button type="button" onclick="manualPokemonData(event);" class="submitting-pokemon"><i
+                                    class="fa fa-binoculars"
+                                    style="margin-right:10px;"></i><?php echo i8ln('Submit Pokemon'); ?>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            <?php } ?>
-            <?php if (current_user_can('manage_options')) {
-                ?>
+                <?php } ?>
                 <?php if (!$noManualGyms) {
                     ?>
                     <div id="tab-gym">
@@ -1058,16 +1065,29 @@ if ($blockIframe) {
                         </div>
                     </div>
                 <?php } ?>
-            <?php } ?>
+                <?php if (!$noManualNests) {
+                    ?>
+                    <div id="tab-nests">
+                        <input type="hidden" name="pokemonID" class="pokemonID"/>
+                        <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)'); ?>
+                        <div class="button-container">
+                            <button type="button" onclick="submitNewNest(event);" class="submitting-nest"><i
+                                    class="fa fa-binoculars"
+                                    style="margin-right:10px;"></i><?php echo i8ln('Submit Nest'); ?>
+                            </button>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
         </div>
-    </div>
-</div>
 <div class="admin-modal">
     <div class="admin-raid-results">
 
     </div>
 </div>
-<?php } ?>
+        <?php
+    }
+    ?>
 </div>
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
@@ -1148,12 +1168,14 @@ if ($blockIframe) {
     var pokemonReportTime = <?php echo $pokemonReportTime === true ? 'true' : 'false' ?>;
     var noDeleteGyms = <?php echo $noDeleteGyms === true ? 'true' : 'false' ?>;
     var noDeletePokestops = <?php echo $noDeletePokestops === true ? 'true' : 'false' ?>;
+    var noDeleteNests = <?php echo $noDeleteNests === true ? 'true' : 'false' ?>;
+    var noManualNests = <?php echo $noManualNests === true ? 'true' : 'false' ?>;
     var noManualQuests = <?php echo $noManualQuests === true ? 'true' : 'false' ?>;
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="static/dist/js/map.common.min.js"></script>
-<script src="static/js/map.js"></script>
 <!--<script src="static/dist/js/map.min.js"></script>-->
+<script src="static/js/map.js"></script>
 <script src="static/dist/js/stats.min.js"></script>
 <script defer
         src="https://maps.googleapis.com/maps/api/js?v=3.31&amp;key=<?= $gmapsKey ?>&amp;callback=initMap&amp;libraries=places,geometry"></script>
