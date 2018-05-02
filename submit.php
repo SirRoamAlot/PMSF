@@ -207,6 +207,7 @@ if ( $action === "raid" ) {
     if ( ! empty( $pokemonId ) && ! empty( $nestId ) ) {
         $cols  = [
             'pokemon_id' => $pokemonId,
+            'username' => $current_user->user_login,
         ];
         $where = [
             'nest_id' => $nestId
@@ -242,7 +243,8 @@ if ( $action === "raid" ) {
             'lat'        => $lat,
             'lon'        => $lng,
             'type'       => 0,
-            'updated'    => time()
+            'updated'    => time(),
+            'username' => $current_user->user_login,
         ];
         $db->insert( "nests", $cols );
     }

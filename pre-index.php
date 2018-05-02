@@ -151,6 +151,28 @@ if ($blockIframe) {
     <!-- Header -->
     <header id="header">
         <a href="#nav"><span class="label"><?php echo i8ln('Options') ?></span></a>
+
+        <h1><a href="#"><?= $title ?></a></h1>
+        <?php
+        if ($discordUrl != "") {
+            echo '<a href="' . $discordUrl . '" target="_blank" style="margin-bottom: 5px; vertical-align: middle;padding:0 5px;">
+            <img src="static/images/discord.png" border="0" style="float: right;">
+        </a>';
+        }
+        if ($paypalUrl != "") {
+            echo '<a href="' . $paypalUrl . '" target="_blank" style="margin-bottom: 5px; vertical-align: middle; padding:0 5px;">
+            <img src="https://www.paypalobjects.com/webstatic/en_US/i/btn/png/btn_donate_74x21.png" border="0" name="submit"
+                 title="PayPal - The safer, easier way to pay online!" alt="Donate" style="float: right;">
+        </a>';
+        }
+        ?>
+        <?php if (!$noWeatherOverlay) {
+            ?>
+            <div id="currentWeather"></div>
+            <?php
+        } ?>
+        <a href="#stats" id="statsToggle" class="statsNav" style="float: right;"><span
+                class="label"><?php echo i8ln('Stats') ?></span></a>
     </header>
     <!-- NAV -->
     <nav id="nav">
@@ -858,20 +880,48 @@ if ($blockIframe) {
                 </button>
             </center>
         </div>
-        <div>
-            <center><a href="#stats" class="btn btn-primary statsNav" id="statsToggle">Stats</a></center>
-        </div>
-        <div>
-            <center><a href="<?php echo wp_logout_url(); ?>" class="btn btn-primary">Logout</a></center>
-        </div>
     </nav>
     <nav id="stats">
-        <i class="fa fa-times" aria-hidden="true" onclick="$('#stats').removeClass('visible');"></i>
-        <h4 style="text-align:center">Most Raid Submissions</h4>
         <div class="switch-container">
-            <table id="top-submitters">
-
-            </table>
+            <?php
+            if ($worldopoleUrl !== "") {
+                ?>
+                <div class="switch-container">
+                    <div>
+                        <center><a href="<?= $worldopoleUrl ?>">Full Stats</a></center>
+                    </div>
+                </div>
+                <?php
+            }
+            ?>
+            <div class="switch-container">
+                <center><h1 id="stats-ldg-label"><?php echo i8ln('Loading') ?>...</h1></center>
+            </div>
+            <div class="stats-label-container">
+                <center><h1 id="stats-pkmn-label"></h1></center>
+            </div>
+            <div id="pokemonList" style="color: black;">
+                <table id="pokemonList_table" class="display" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th><?php echo i8ln('Icon') ?></th>
+                        <th><?php echo i8ln('Name') ?></th>
+                        <th><?php echo i8ln('Count') ?></th>
+                        <th>%</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div id="pokeStatStatus" style="color: black;"></div>
+            </div>
+            <div class="stats-label-container">
+                <center><h1 id="stats-gym-label"></h1></center>
+            </div>
+            <div id="arenaList" style="color: black;"></div>
+            <div class="stats-label-container">
+                <center><h1 id="stats-pkstop-label"></h1></center>
+            </div>
+            <div id="pokestopList" style="color: black;"></div>
         </div>
     </nav>
     <nav id="gym-details">
@@ -885,16 +935,16 @@ if ($blockIframe) {
 
     </div>
     <?php if (!$noManualNests) { ?>
-    <div class="global-nest-modal" style="display:none;">
-        <input type="hidden" name="pokemonID" class="pokemonID"/>
-        <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)'); ?>
-        <div class="button-container">
-            <button type="button" onclick="manualNestData(event);" class="submitting-nests"><i
-                    class="fa fa-binoculars"
-                    style="margin-right:10px;"></i><?php echo i8ln('Submit Nest'); ?>
-            </button>
+        <div class="global-nest-modal" style="display:none;">
+            <input type="hidden" name="pokemonID" class="pokemonID"/>
+            <?php pokemonFilterImages($noPokemonNumbers, 'pokemonSubmitFilter(event)'); ?>
+            <div class="button-container">
+                <button type="button" onclick="manualNestData(event);" class="submitting-nests"><i
+                        class="fa fa-binoculars"
+                        style="margin-right:10px;"></i><?php echo i8ln('Submit Nest'); ?>
+                </button>
+            </div>
         </div>
-    </div>
     <?php } ?>
 
     <?php if (!$noManualQuests) { ?>
@@ -999,6 +1049,7 @@ if ($blockIframe) {
             </div>
         </div>
     <?php } ?>
+    <?php
     if ((!$noPokemon && !$noManualPokemon) || (!$noGyms && !$noManualGyms) || (!$noPokestops && !$noManualPokestops)) {
         ?>
         <button class="submit-on-off-button" onclick="$('.submit-on-off-button').toggleClass('on');">
@@ -1080,14 +1131,15 @@ if ($blockIframe) {
                 <?php } ?>
             </div>
         </div>
+        <?php
+    }
+    ?>
+</div>
+
 <div class="admin-modal">
     <div class="admin-raid-results">
 
     </div>
-</div>
-        <?php
-    }
-    ?>
 </div>
 <!-- Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.9.1/polyfill.min.js"></script>
@@ -1174,8 +1226,7 @@ if ($blockIframe) {
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script src="static/dist/js/map.common.min.js"></script>
-<!--<script src="static/dist/js/map.min.js"></script>-->
-<script src="static/js/map.js"></script>
+<script src="static/dist/js/map.min.js"></script>
 <script src="static/dist/js/stats.min.js"></script>
 <script defer
         src="https://maps.googleapis.com/maps/api/js?v=3.31&amp;key=<?= $gmapsKey ?>&amp;callback=initMap&amp;libraries=places,geometry"></script>
