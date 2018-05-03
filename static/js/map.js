@@ -1837,7 +1837,7 @@ function manualGymData(event) { // eslint-disable-line no-unused-vars
     }
 }
 function manualPokemonData(event) { // eslint-disable-line no-unused-vars
-    var form = $(event.target).parent().parent()
+    var form = $(event.target).parent().parent().parent()
     var id = form.find('.pokemonID').val()
     var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
     var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
@@ -1993,7 +1993,7 @@ function submitNewNest(event) { // eslint-disable-line no-unused-vars
 }
 
 function manualNestData(event) { // eslint-disable-line no-unused-vars
-    var cont = $(event.target).parent().parent()
+    var cont = $(event.target).parent().parent().parent()
     var nestId = cont.find('.submitting-nests').data('nest')
     var pokemonId = cont.find('.pokemonID').val()
     if (nestId && nestId !== '' && pokemonId && pokemonId !== '') {
@@ -3506,8 +3506,8 @@ function fetchCriesJson() {
 
 function pokemonSubmitFilter(event) { // eslint-disable-line no-unused-vars
     var img = $(event.target).parent()
-    var cont = img.parent().parent()
-    var select = cont.find('input')
+    var cont = img.parent().parent().parent()
+    var select = cont.find('input.pokemonID')
     var id = img.data('value').toString()
     select.val(id)
     cont.find('.pokemon-icon-sprite').removeClass('active')
@@ -3566,9 +3566,9 @@ function generateRaidBossList() {
 function pokemonSpritesFilter() {
     jQuery('.pokemon-list').parent().find('.select2').hide()
     loadDefaultImages()
-    jQuery('.pokemon-list .pokemon-icon-sprite').on('click', function () {
+    jQuery('#nav .pokemon-list .pokemon-icon-sprite').on('click', function () {
         var img = jQuery(this)
-        var select = jQuery(this).parent().parent().find('input')
+        var select = jQuery(this).parent().parent().parent().find('.select2-hidden-accessible')
         var value = select.val().split(',')
         var id = img.data('value').toString()
         if (img.hasClass('active')) {
