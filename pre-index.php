@@ -887,56 +887,19 @@ if ( $blockIframe ) {
             </center>
         </div>
         <div>
-            <center>
-                <input id="fileInput" type="file" style="display:none;" onchange="openFile(event)"/>
-                <button class="settings"
-                        onclick="document.getElementById('fileInput').click()">
-                    <i class="fa fa-download" aria-hidden="true"></i> <?php echo i8ln( 'Import Settings' ) ?>
-                </button>
-            </center>
+            <center><a href="#stats" class="btn btn-primary statsNav" id="statsToggle">Stats</a></center>
+        </div>
+        <div>
+            <center><a href="<?php echo wp_logout_url(); ?>" class="btn btn-primary">Logout</a></center>
         </div>
     </nav>
     <nav id="stats">
+        <i class="fa fa-times" aria-hidden="true" onclick="$('#stats').removeClass('visible');"></i>
+        <h4 style="text-align:center">Most Raid Submissions</h4>
         <div class="switch-container">
-            <?php
-            if ( $worldopoleUrl !== "" ) {
-                ?>
-                <div class="switch-container">
-                    <div>
-                        <center><a href="<?= $worldopoleUrl ?>">Full Stats</a></center>
-                    </div>
-                </div>
-                <?php
-            }
-            ?>
-            <div class="switch-container">
-                <center><h1 id="stats-ldg-label"><?php echo i8ln( 'Loading' ) ?>...</h1></center>
-            </div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-pkmn-label"></h1></center>
-            </div>
-            <div id="pokemonList" style="color: black;">
-                <table id="pokemonList_table" class="display" cellspacing="0" width="100%">
-                    <thead>
-                    <tr>
-                        <th><?php echo i8ln( 'Icon' ) ?></th>
-                        <th><?php echo i8ln( 'Name' ) ?></th>
-                        <th><?php echo i8ln( 'Count' ) ?></th>
-                        <th>%</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <div id="pokeStatStatus" style="color: black;"></div>
-            </div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-gym-label"></h1></center>
-            </div>
-            <div id="arenaList" style="color: black;"></div>
-            <div class="stats-label-container">
-                <center><h1 id="stats-pkstop-label"></h1></center>
-            </div>
-            <div id="pokestopList" style="color: black;"></div>
+            <table id="top-submitters">
+
+            </table>
         </div>
     </nav>
     <nav id="gym-details">
