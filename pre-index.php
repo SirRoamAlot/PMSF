@@ -65,7 +65,7 @@ if ( $blockIframe ) {
             $json = file_get_contents( 'static/dist/data/pokemon.min.json' );
             $mons = json_decode( $json, true );
         }
-        echo '<div class="pokemon-list-cont" id="pokemon-list-cont-' . $num . '"><input type="hidden" class="search-number" value="' . $num . '" /><input class="search search-input" placeholder="' . i8ln("Search Name, ID & Type") . '" /><div class="pokemon-list list">';
+        echo '<div class="pokemon-list-cont" id="pokemon-list-cont-' . $num . '"><input type="hidden" class="search-number" value="' . $num . '" /><input class="search search-input" placeholder="' . i8ln( "Search Name, ID & Type" ) . '" /><div class="pokemon-list list">';
         $i = 0;
         $z = 0;
         foreach ( $mons as $k => $pokemon ) {
@@ -79,7 +79,7 @@ if ( $blockIframe ) {
                 if ( $k > 386 ) {
                     break;
                 }
-                echo "<span class='pokemon-icon-sprite' data-value='" . $k . "' onclick='$onClick'><span style='display:none' class='types'>" . i8ln($type) . "</span><span style='display:none' class='name'>" . i8ln($name) . "</span><span style='display:none' class='id'>$k</span><span class='$k inner-bg' style='background-position:-" . $i * 48.25 . "px -" . $z . "px'></span>";
+                echo "<span class='pokemon-icon-sprite' data-value='" . $k . "' onclick='$onClick'><span style='display:none' class='types'>" . i8ln( $type ) . "</span><span style='display:none' class='name'>" . i8ln( $name ) . "</span><span style='display:none' class='id'>$k</span><span class='$k inner-bg' style='background-position:-" . $i * 48.25 . "px -" . $z . "px'></span>";
                 if ( ! $noPokemonNumbers ) {
                     echo "<span class='pokemon-number'>" . $k . "</span>";
                 }
@@ -170,38 +170,38 @@ if ( $blockIframe ) {
             <div id="currentWeather"></div>
             <?php
         } ?>
-        
+
         <?php
-        if ($noNativeLogin === false || $noDiscordLogin === false) {
-            if (isset($_COOKIE["LoginCookie"])) {
-                if (validateCookie($_COOKIE["LoginCookie"]) === false) {
-                    header("Location: .");
+        if ( $noNativeLogin === false || $noDiscordLogin === false ) {
+            if ( isset( $_COOKIE["LoginCookie"] ) ) {
+                if ( validateCookie( $_COOKIE["LoginCookie"] ) === false ) {
+                    header( "Location: ." );
                 }
             }
-            if (!empty($_SESSION['user']->id)) {
+            if ( ! empty( $_SESSION['user']->id ) ) {
                 $info = $db->query(
                     "SELECT expire_timestamp FROM users WHERE id = :id AND login_system = :login_system", [
-                        ":id" => $_SESSION['user']->id,
+                        ":id"           => $_SESSION['user']->id,
                         ":login_system" => $_SESSION['user']->login_system
                     ]
                 )->fetch();
 
                 $_SESSION['user']->expire_timestamp = $info['expire_timestamp'];
 
-                if (!empty($_SESSION['user']->updatePwd) && $_SESSION['user']->updatePwd === 1) {
-                    header("Location: ./user");
+                if ( ! empty( $_SESSION['user']->updatePwd ) && $_SESSION['user']->updatePwd === 1 ) {
+                    header( "Location: ./user" );
                     die();
                 }
-                
-                if ($info['expire_timestamp'] > time()) {
+
+                if ( $info['expire_timestamp'] > time() ) {
                     $color = "green";
                 } else {
                     $color = "red";
                 }
 
-                echo "<span style='color: {$color};'>" . substr($_SESSION['user']->user, 0, 3) . "...</span>";
+                echo "<span style='color: {$color};'>" . substr( $_SESSION['user']->user, 0, 3 ) . "...</span>";
             } else {
-                echo "<a href='./user'>" . i8ln('Login') . "</a>";
+                echo "<a href='./user'>" . i8ln( 'Login' ) . "</a>";
             }
         }
         ?>
@@ -305,7 +305,7 @@ if ( $blockIframe ) {
                                             <div class="pokemon-container">
                                                 <input id="exclude-pokemon" type="text" readonly="true">
                                                 <?php
-                                                pokemonFilterImages( $noPokemonNumbers ,'',[],2); ?>
+                                                pokemonFilterImages( $noPokemonNumbers, '', [], 2 ); ?>
                                             </div>
                                             <a href="#" class="select-all"><?php echo i8ln( 'All' ) ?>
                                                 <div>
@@ -324,7 +324,7 @@ if ( $blockIframe ) {
                                             <div class="pokemon-container">
                                                 <input id="exclude-min-iv" type="text" readonly="true">
                                                 <?php
-                                                pokemonFilterImages( $noPokemonNumbers ,'',[],3); ?>
+                                                pokemonFilterImages( $noPokemonNumbers, '', [], 3 ); ?>
                                             </div>
                                             <a href="#" class="select-all"><?php echo i8ln( 'All' ) ?>
                                                 <div>
@@ -673,7 +673,7 @@ if ( $blockIframe ) {
                         <h3>' . i8ln( 'Notify of Pokemon' ) . '</h3><a href="#" class="select-all">All</a>/<a href="#" class="hide-all">None</a>
                         <div style="max-height:165px;overflow-y:auto;">
                             <input id="notify-pokemon" type="text" readonly="true"/>';
-                pokemonFilterImages( $noPokemonNumbers ,'',[],4);
+                pokemonFilterImages( $noPokemonNumbers, '', [], 4 );
                 echo '</div>
                     </label>
                 </div>';
@@ -916,13 +916,13 @@ if ( $blockIframe ) {
             </center>
         </div>
         <?php
-        if (($noNativeLogin === false || $noDiscordLogin === false) && !empty($_SESSION['user']->id)) {
+        if ( ( $noNativeLogin === false || $noDiscordLogin === false ) && ! empty( $_SESSION['user']->id ) ) {
             ?>
             <div>
                 <center>
                     <button class="settings"
                             onclick="document.location.href='user'">
-                        <i class="fa" aria-hidden="true"></i> <?php echo i8ln('Activate Key'); ?>
+                        <i class="fa" aria-hidden="true"></i> <?php echo i8ln( 'Activate Key' ); ?>
                     </button>
                 </center>
             </div>
@@ -930,22 +930,24 @@ if ( $blockIframe ) {
                 <center>
                     <button class="settings"
                             onclick="document.location.href='logout.php'">
-                        <i class="fa" aria-hidden="true"></i> <?php echo i8ln('Logout'); ?>
+                        <i class="fa" aria-hidden="true"></i> <?php echo i8ln( 'Logout' ); ?>
                     </button>
                 </center>
             </div><br>
-            <div><center><p>
+            <div>
+                <center><p>
+                        <?php
+                        $time = date( "Y-m-d", $_SESSION['user']->expire_timestamp );
+
+                        echo $_SESSION['user']->user . "<br>";
+                        if ( $_SESSION['user']->expire_timestamp > time() ) {
+                            echo "<span style='color: green;'>" . i8ln( 'Membership expires on' ) . " {$time}</span>";
+                        } else {
+                            echo "<span style='color: red;'>" . i8ln( 'Membership expired on' ) . " {$time}</span>";
+                        } ?>
+                    </p></center>
+            </div>
             <?php
-            $time = date("Y-m-d", $_SESSION['user']->expire_timestamp);
-            
-            echo $_SESSION['user']->user . "<br>";
-            if ($_SESSION['user']->expire_timestamp > time()) {
-                echo "<span style='color: green;'>" . i8ln('Membership expires on') . " {$time}</span>";
-            } else {
-                echo "<span style='color: red;'>" . i8ln('Membership expired on') . " {$time}</span>";
-            } ?>
-            </p></center></div>
-        <?php
         }
         ?>
     </nav>
@@ -1005,7 +1007,7 @@ if ( $blockIframe ) {
     <?php if ( ! $noManualNests ) { ?>
         <div class="global-nest-modal" style="display:none;">
             <input type="hidden" name="pokemonID" class="pokemonID"/>
-            <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $excludeNestMons ,5); ?>
+            <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $excludeNestMons, 5 ); ?>
             <div class="button-container">
                 <button type="button" onclick="manualNestData(event);" class="submitting-nests"><i
                         class="fa fa-binoculars"
@@ -1081,12 +1083,17 @@ if ( $blockIframe ) {
             <div class="search-modal" style="display:none;">
                 <div id="search-tabs">
                     <ul>
-                        <li><a href="#tab-rewards">Rewards</a></li>
-                        <?php if ( ! $noGyms ) { ?>
-                            <li><a href="#tab-gym"><?php echo i8ln( 'Gyms' ); ?></a></li>
+                        <?php if ( ! $noManualQuests ) { ?>
+                            <li><a href="#tab-rewards"><img src="static/images/reward.png"/></a></li>
+                        <?php }
+                        if ( ! $noNests ) { ?>
+                            <li><a href="#tab-nests"><img src="static/images/nest.png"/></a></li>
+                        <?php }
+                        if ( ! $noGyms ) { ?>
+                            <li><a href="#tab-gym"><img src="static/forts/ingame/Uncontested.png"/></a></li>
                         <?php }
                         if ( ! $noPokestops ) { ?>
-                            <li><a href="#tab-pokestop"><?php echo i8ln( 'Pokestops' ); ?></a></li>
+                            <li><a href="#tab-pokestop"><img src="static/forts/Pstop.png"/></a></li>
                         <?php } ?>
                     </ul>
                     <?php if ( ! $noManualQuests ) { ?>
@@ -1095,6 +1102,14 @@ if ( $blockIframe ) {
                                    placeholder="<?php echo i8ln( 'Enter Reward Name' ); ?>"
                                    data-type="reward" class="search-input"/>
                             <ul id="reward-search-results" class="search-results reward-results"></ul>
+                        </div>
+                    <?php } ?>
+                    <?php if ( ! $noNests ) { ?>
+                        <div id="tab-nests">
+                            <input type="search" id="nest-search" name="nest-search"
+                                   placeholder="<?php echo i8ln( 'Enter Pokemon or Type' ); ?>"
+                                   data-type="nests" class="search-input"/>
+                            <ul id="nest-search-results" class="search-results nest-results"></ul>
                         </div>
                     <?php } ?>
                     <?php if ( ! $noGyms ) { ?>
@@ -1108,7 +1123,8 @@ if ( $blockIframe ) {
                     if ( ! $noPokestops ) { ?>
                         <div id="tab-pokestop">
                             <input type="search" id="pokestop-search" name="pokestop-search"
-                                   placeholder="<?php echo i8ln( 'Enter Pokestop Name' ); ?>" data-type="pokestops" class="search-input"/>
+                                   placeholder="<?php echo i8ln( 'Enter Pokestop Name' ); ?>" data-type="pokestops"
+                                   class="search-input"/>
                             <ul id="pokestop-search-results" class="search-results pokestop-results"></ul>
                         </div>
                     <?php } ?>
@@ -1128,28 +1144,28 @@ if ( $blockIframe ) {
             <input type="hidden" value="" name="submitLongitude" class="submitLongitude"/>
             <div id="submit-tabs">
                 <ul>
-                    <?php if ( ! $noManualPokemon ) {
+                    <?php if ( ! $noManualPokemon && !$noPokemon ) {
                         ?>
                         <li><a href="#tab-pokemon"><img src="static/images/pokeball.png"/></a></li>
                     <?php } ?>
-                    <?php if ( ! $noManualGyms ) {
+                    <?php if ( ! $noManualGyms && !$noGyms ) {
                         ?>
                         <li><a href="#tab-gym"><img src="static/forts/ingame/Uncontested.png"/></a></li>
                     <?php } ?>
-                    <?php if ( ! $noManualPokestops ) {
+                    <?php if ( ! $noManualPokestops && !$noPokestops) {
                         ?>
                         <li><a href="#tab-pokestop"><img src="static/forts/Pstop.png"/></a></li>
                     <?php } ?>
-                    <?php if ( ! $noManualNests ) {
+                    <?php if ( ! $noManualNests && !$noNests ) {
                         ?>
                         <li><a href="#tab-nests"><img src="static/images/nest.png"/></a></li>
                     <?php } ?>
                 </ul>
-                <?php if ( ! $noManualPokemon ) {
+                <?php if ( ! $noManualPokemon && !$noPokemon  ) {
                     ?>
                     <div id="tab-pokemon">
                         <input type="hidden" name="pokemonID" class="pokemonID"/>
-                        <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $pokemonToExclude ,6); ?>
+                        <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $pokemonToExclude, 6 ); ?>
                         <div class="button-container">
                             <button type="button" onclick="manualPokemonData(event);" class="submitting-pokemon"><i
                                     class="fa fa-binoculars"
@@ -1158,11 +1174,12 @@ if ( $blockIframe ) {
                         </div>
                     </div>
                 <?php } ?>
-                <?php if ( ! $noManualGyms ) {
+                <?php if ( ! $noManualGyms && !$noGyms ) {
                     ?>
                     <div id="tab-gym">
                         <input type="text" id="gym-name" name="gym-name"
-                               placeholder="<?php echo i8ln( 'Enter Gym Name' ); ?>" data-type="forts" class="search-input">
+                               placeholder="<?php echo i8ln( 'Enter Gym Name' ); ?>" data-type="forts"
+                               class="search-input">
                         <div class="button-container">
                             <button type="button" onclick="manualGymData(event);" class="submitting-gym"><i
                                     class="fa fa-binoculars"
@@ -1171,11 +1188,12 @@ if ( $blockIframe ) {
                         </div>
                     </div>
                 <?php } ?>
-                <?php if ( ! $noManualPokestops ) {
+                <?php if ( ! $noManualPokestops && !$noPokestops ) {
                     ?>
                     <div id="tab-pokestop">
                         <input type="text" id="pokestop-name" name="pokestop-name"
-                               placeholder="<?php echo i8ln( 'Enter Pokestop Name' ); ?>" data-type="pokestop" class="search-input">
+                               placeholder="<?php echo i8ln( 'Enter Pokestop Name' ); ?>" data-type="pokestop"
+                               class="search-input">
                         <div class="button-container">
                             <button type="button" onclick="manualPokestopData(event);" class="submitting-pokestop"><i
                                     class="fa fa-binoculars"
@@ -1184,11 +1202,11 @@ if ( $blockIframe ) {
                         </div>
                     </div>
                 <?php } ?>
-                <?php if ( ! $noManualNests ) {
+                <?php if ( ! $noManualNests && !$noNests ) {
                     ?>
                     <div id="tab-nests">
                         <input type="hidden" name="pokemonID" class="pokemonID"/>
-                        <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $excludeNestMons ,7); ?>
+                        <?php pokemonFilterImages( $noPokemonNumbers, 'pokemonSubmitFilter(event)', $excludeNestMons, 7 ); ?>
                         <div class="button-container">
                             <button type="button" onclick="submitNewNest(event);" class="submitting-nest"><i
                                     class="fa fa-binoculars"
@@ -1281,12 +1299,13 @@ if ( $blockIframe ) {
     var manualRaids = <?php echo $noManualRaids === true ? 'false' : 'true' ?>;
     var pokemonReportTime = <?php echo $pokemonReportTime === true ? 'true' : 'false' ?>;
     var noDeleteGyms = <?php echo $noDeleteGyms === true ? 'true' : 'false' ?>;
+    var defaultUnit = '<?php echo $defaultUnit ?>';
     var noDeletePokestops = <?php echo $noDeletePokestops === true ? 'true' : 'false' ?>;
     var noDeleteNests = <?php echo $noDeleteNests === true ? 'true' : 'false' ?>;
     var noManualNests = <?php echo $noManualNests === true ? 'true' : 'false' ?>;
     var noManualQuests = <?php echo $noManualQuests === true ? 'true' : 'false' ?>;
-    var login = <?php echo $noNativeLogin === false || $noDiscordLogin === false  ? 'true' : 'false' ?>;
-    var expireTimestamp = <?php echo isset($_SESSION['user']->expire_timestamp) ? $_SESSION['user']->expire_timestamp : 0 ?>;
+    var login = <?php echo $noNativeLogin === false || $noDiscordLogin === false ? 'true' : 'false' ?>;
+    var expireTimestamp = <?php echo isset( $_SESSION['user']->expire_timestamp ) ? $_SESSION['user']->expire_timestamp : 0 ?>;
     var timestamp = <?php echo time() ?>;
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
