@@ -1086,7 +1086,7 @@ if ( $blockIframe ) {
                         ?>
                         <li><a href="#tab-pokestop"><img src="static/forts/Pstop.png"/></a></li>
                     <?php } ?>
-                    <?php if ( ! $noManualNests && !$noNests ) {
+                    <?php if ( ! $noAddNewNests && !$noNests ) {
                         ?>
                         <li><a href="#tab-nests"><img src="static/images/nest.png"/></a></li>
                     <?php } ?>
@@ -1132,7 +1132,7 @@ if ( $blockIframe ) {
                         </div>
                     </div>
                 <?php } ?>
-                <?php if ( ! $noManualNests && !$noNests ) {
+                <?php if ( ! $noAddNewNests && !$noNests ) {
                     ?>
                     <div id="tab-nests">
                         <input type="hidden" name="pokemonID" class="pokemonID"/>

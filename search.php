@@ -23,19 +23,12 @@ if ( $action === "pokestops" ) {
 if ( $dbname !== '' ) {
     if ( $action === "reward" ) {
         if ( $db->info()['driver'] === 'pgsql' ) {
-            $data = $db->query( "SELECT id,external_id,name,lat,lon,url,quest_id,reward FROM " . $dbname . " WHERE LOWER(reward) LIKE :name LIMIT 10", [ ':name' => "%" . strtolower( $term ) . "%" ] )->fetchAll();
+            $query = "SELECT id,external_id,name,lat,lon,url,quest_id,reward, ROUND(cast( 3959 * acos( cos( radians(:lat) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(:lon) ) + sin( radians(:lat) ) * sin( radians( lat ) ) ) as numeric),2) AS distance FROM " . $dbname . " WHERE LOWER(reward) LIKE :name ORDER BY distance LIMIT 10";
         } else {
-            $data = $db->select( "pokestops", [
-                'id',
-                'external_id',
-                'name',
-                'lat',
-                'lon',
-                'url',
-                'quest_id',
-                'reward'
-            ], [ 'reward[~]' => $term, 'LIMIT' => 10 ] );
+            $query = "SELECT id,external_id,name,lat,lon,url,quest_id,reward, ROUND(( 3959 * acos( cos( radians(:lat) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(:lon) ) + sin( radians(:lat) ) * sin( radians( lat ) ) ) ),2) AS distance FROM " . $dbname . " WHERE reward LIKE :name ORDER BY distance LIMIT 10";
         }
+        $data = $db->query( $query, [ ':name' => "%" . strtolower( $term ) . "%",  ':lat' => $lat, ':lon' => $lon ] )->fetchAll();
+
     } elseif ( $action === "nests" ) {
 
         $json = file_get_contents( 'static/dist/data/pokemon.min.json' );
@@ -69,13 +62,18 @@ if ( $dbname !== '' ) {
             }
         }
     } else {
+
         if ( $db->info()['driver'] === 'pgsql' ) {
-            $data = $db->query( "SELECT id,external_id,name,lat,lon,url FROM " . $dbname . " WHERE LOWER(name) LIKE :name LIMIT 10", [ ':name' => "%" . strtolower( $term ) . "%" ] )->fetchAll();
+            $query = "SELECT id,external_id,name,lat,lon,url, ROUND(cast( 3959 * acos( cos( radians(:lat) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(:lon) ) + sin( radians(:lat) ) * sin( radians( lat ) ) ) as numeric),2) AS distance FROM " . $dbname . " WHERE LOWER(name) LIKE :name ORDER BY distance LIMIT 10";
         } else {
-            $data = $db->select( $action, [ 'id', 'external_id', 'name', 'lat', 'lon', 'url' ], [
-                'name[~]' => $term,
-                'LIMIT'   => 10
-            ] );
+            $query = "SELECT id,external_id,name,lat,lon,url, ROUND(( 3959 * acos( cos( radians(:lat) ) * cos( radians( lat ) ) * cos( radians( lon ) - radians(:lon) ) + sin( radians(:lat) ) * sin( radians( lat ) ) ) ),2) AS distance FROM " . $dbname . " WHERE LOWER(name) LIKE :name ORDER BY distance LIMIT 10";
+        }
+        $data = $db->query( $query, [ ':name' => "%" . strtolower( $term ) . "%",  ':lat' => $lat, ':lon' => $lon ] )->fetchAll();
+    }
+
+    foreach($data as $k => $p){
+        if($defaultUnit === "km"){
+            $data[$k]['distance'] = round($data[$k]['distance'] * 1.60934,2);
         }
     }
     //var_dump($db->last());

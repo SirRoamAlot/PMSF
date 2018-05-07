@@ -1729,10 +1729,7 @@ function searchAjax(field) { // eslint-disable-line no-unused-vars
                     } else if (element.url !== '') {
                         html += '<span style="background:url(' + element.url + ') no-repeat;" class="i-icon" ></span>'
                     }
-                    html += '<div class="cont"><span class="name" >' + element.name + '</span>'
-                    if (sr.hasClass('nest-results')) {
-                        html += '<span class="distance">&nbsp;-&nbsp;' + element.distance + defaultUnit + '</span>'
-                    }
+                    html += '<div class="cont"><span class="name" >' + element.name + '</span>' + '<span class="distance">&nbsp;-&nbsp;' + element.distance + defaultUnit + '</span>'
                     if(sr.hasClass('reward-results')){
                         html += '<span>&nbsp;-&nbsp;</span> <span class="reward" style="font-weight:bold">' + element.reward + '</span>'
                     }
@@ -1770,7 +1767,7 @@ function centerMapOnCoords(event) { // eslint-disable-line no-unused-vars
     var lat = point.data('lat')
     var lon = point.data('lon')
     map.setCenter(new google.maps.LatLng(lat, lon))
-    map.setZoom(20)
+    map.setZoom(17)
     $('.ui-dialog-content').dialog('close')
 }
 
