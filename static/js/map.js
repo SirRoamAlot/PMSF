@@ -361,8 +361,8 @@ function initMap() { // eslint-disable-line no-unused-vars
                 },
                 open: function (event, ui) {
                     $('.submit-widget-popup #submit-tabs').tabs()
-                    $('.submit-widget-popup .pokemon-list-cont').each(function(index) {
-                        $(this).attr('id','pokemon-list-cont-6' + index);
+                    $('.submit-widget-popup .pokemon-list-cont').each(function (index) {
+                        $(this).attr('id', 'pokemon-list-cont-6' + index);
                         var options = {
                             valueNames: ['name', 'types', 'id']
                         };
@@ -841,20 +841,20 @@ function pokestopLabel(expireTime, latitude, longitude, stopName, lureUser, id, 
         str =
             '<div>' +
             '<b>' + stopName + '</b>' +
-        '</div>';
+            '</div>';
         if (!noManualQuests && quest !== null) {
-            str += '<div>'+
+            str += '<div>' +
                 i8ln('Quest:') + ' ' +
                 i8ln(questList[quest]) +
                 '</div>'
-            if(reward !== null && reward !== "NULL"){
-                str += '<div>'+
+            if (reward !== null && reward !== "NULL") {
+                str += '<div>' +
                     i8ln('Reward:') + ' ' +
                     i8ln(reward) +
                     '</div>'
             }
         }
-        str +=  '<div>' +
+        str += '<div>' +
             i8ln('Location:') + ' ' + '<a href="javascript:void(0)" onclick="javascript:openMapDirections(' + latitude + ',' + longitude + ')" title="' + i8ln('View in Maps') + '">' + latitude.toFixed(6) + ', ' + longitude.toFixed(7) + '</a>' +
             '</div>'
         if (!noDeletePokestops) {
@@ -1261,14 +1261,14 @@ function setupPokestopMarker(item) {
 
     return marker
 }
-function setupNestMarker(item){
-    if(item.pokemon_id > 0){
+function setupNestMarker(item) {
+    if (item.pokemon_id > 0) {
         var str = '<div class="marker-nests">' +
             '<img src="static/images/nest-' + item.pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
             '<i class="nest-pokemon-sprite n' + item.pokemon_id + '"></i>' +
             '</div>'
     }
-    else{
+    else {
         var str = '<div class="marker-nests">' +
             '<img src="static/images/nest-empty.png" style="width:36px;height: auto;"/>' +
             '</div>'
@@ -1302,7 +1302,7 @@ function nestLabel(item) {
         $.each(types, function (index, type) {
             typesDisplay += getTypeSpan(type)
         })
-        str += '<b>' + item.pokemon_name  + '</b>' +
+        str += '<b>' + item.pokemon_name + '</b>' +
             '</div>' +
             '<div>' +
             typesDisplay +
@@ -1311,9 +1311,9 @@ function nestLabel(item) {
         str += '<b>' + i8ln('No Pokemon - Assign One Below') + '</b>'
     }
     str += '<div>' +
-    'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + item.lat + ',' + item.lon + ')" title="' + i8ln('View in Maps') + '">' + item.lat.toFixed(6) + ', ' + item.lon.toFixed(7) + '</a>' +
-    '</div>'
-    if(item.type === 1){
+        'Location: <a href="javascript:void(0)" onclick="javascript:openMapDirections(' + item.lat + ',' + item.lon + ')" title="' + i8ln('View in Maps') + '">' + item.lat.toFixed(6) + ', ' + item.lon.toFixed(7) + '</a>' +
+        '</div>'
+    if (item.type === 1) {
         str += '<div style="margin-bottom:5px;">' + i8ln('As found on thesilphroad.com') + '</div>'
     }
     if (!noDeleteNests) {
@@ -1694,11 +1694,8 @@ function loadWeatherCellData(cell) {
         }
     })
 }
-
-function searchAjax(field) { // eslint-disable-line no-unused-vars
-    var term = field.val()
-    var type = field.data('type')
-    var center = map.getCenter()
+function searchForItem(lat, lon, term, type, field) {
+    console.log(term)
     if (term !== '') {
         $.ajax({
             url: 'search',
@@ -1709,8 +1706,8 @@ function searchAjax(field) { // eslint-disable-line no-unused-vars
             data: {
                 'action': type,
                 'term': term,
-                'lat': center.lat(),
-                'lon': center.lng()
+                'lat': lat,
+                'lon': lon
             },
             error: function error() {
                 // Display error toast
@@ -1730,13 +1727,14 @@ function searchAjax(field) { // eslint-disable-line no-unused-vars
                         html += '<span style="background:url(' + element.url + ') no-repeat;" class="i-icon" ></span>'
                     }
                     html += '<div class="cont"><span class="name" >' + element.name + '</span>' + '<span class="distance">&nbsp;-&nbsp;' + element.distance + defaultUnit + '</span>'
-                    if(sr.hasClass('reward-results')){
+                    if (sr.hasClass('reward-results')) {
                         html += '<span>&nbsp;-&nbsp;</span> <span class="reward" style="font-weight:bold">' + element.reward + '</span>'
                     }
                     html += '</div></div>'
                     if (sr.hasClass('gym-results') && manualRaids) {
                         html += '<div class="right-column"><i class="fa fa-binoculars submit-raid"  onClick="openRaidModal(event);" data-id="' + element.external_id + '"></i></div>'
-                    } if (sr.hasClass('pokestop-results') && !noManualQuests) {
+                    }
+                    if (sr.hasClass('pokestop-results') && !noManualQuests) {
                         html += '<div class="right-column"><i class="fa fa-binoculars submit-quests"  onClick="openQuestModal(event);" data-id="' + element.external_id + '"></i></div>'
                     }
                     html += '</li>'
@@ -1745,6 +1743,18 @@ function searchAjax(field) { // eslint-disable-line no-unused-vars
             }
         })
     }
+}
+
+function searchAjax(field) { // eslint-disable-line no-unused-vars
+    var term = field.val()
+    var type = field.data('type')
+    navigator.geolocation.getCurrentPosition(function (position) {
+        searchForItem(position.coords.latitude, position.coords.longitude, term, type, field)
+    }, function (err) {
+        var center = map.getCenter()
+        searchForItem(center.lat(), center.lng(), term, type, field)
+    })
+
 }
 
 function centerMapOnCoords(event) { // eslint-disable-line no-unused-vars
@@ -1761,7 +1771,7 @@ function centerMapOnCoords(event) { // eslint-disable-line no-unused-vars
         point = point.parent().parent().parent()
     } else if (!point.hasClass('search-result')) {
         point = point.parent().parent()
-    } else{
+    } else {
         point = point.parent().parent().parent()
     }
     var lat = point.data('lat')
@@ -1960,7 +1970,7 @@ function deleteNest(event) { // eslint-disable-line no-unused-vars
 
 function submitNewNest(event) { // eslint-disable-line no-unused-vars
     var cont = $(event.target).parent().parent()
-    var id = cont.find( '.pokemonID' ).val()
+    var id = cont.find('.pokemonID').val()
     var lat = $('.submit-modal.ui-dialog-content .submitLatitude').val()
     var lng = $('.submit-modal.ui-dialog-content .submitLongitude').val()
     if (lat && lat !== '' && lng && lng !== '') {
@@ -1975,7 +1985,7 @@ function submitNewNest(event) { // eslint-disable-line no-unused-vars
                     'action': 'new-nest',
                     'lat': lat,
                     'lng': lng,
-                    'id' : id
+                    'id': id
                 },
                 error: function error() {
                     // Display error toast
@@ -2105,7 +2115,7 @@ function manualRaidData(event) { // eslint-disable-line no-unused-vars
 function openNestModal(event) { // eslint-disable-line no-unused-vars
     $('.ui-dialog').remove()
     var val = $(event.target).data('id')
-    $('.submitting-nests').attr('data-nest',val)
+    $('.submitting-nests').attr('data-nest', val)
     $('.global-nest-modal').clone().dialog({
         modal: true,
         maxHeight: 600,
@@ -2115,8 +2125,8 @@ function openNestModal(event) { // eslint-disable-line no-unused-vars
             'ui-dialog': 'ui-dialog nest-widget-popup'
         },
         open: function (event, ui) {
-            $('.nest-widget-popup .pokemon-list-cont').each(function(index) {
-                $(this).attr('id','pokemon-list-cont-7' + index);
+            $('.nest-widget-popup .pokemon-list-cont').each(function (index) {
+                $(this).attr('id', 'pokemon-list-cont-7' + index);
                 var options = {
                     valueNames: ['name', 'types', 'id']
                 };
@@ -2147,7 +2157,7 @@ function openQuestModal(event) { // eslint-disable-line no-unused-vars
         modal: true,
         maxHeight: 600,
         buttons: {},
-        title:i8ln('Submit a Quest'),
+        title: i8ln('Submit a Quest'),
         classes: {
             'ui-dialog': 'ui-dialog raid-widget-popup'
         }
