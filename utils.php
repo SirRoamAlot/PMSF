@@ -61,7 +61,8 @@ function validateToken($token)
 }
 
 
-function sendToWebhook($webhookUrl, $webhook) {
+function sendToWebhook($webhookUrl, $webhook)
+{
     $c = curl_init($webhookUrl);
     curl_setopt($c, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($c, CURLOPT_POST, true);
@@ -72,6 +73,7 @@ function sendToWebhook($webhookUrl, $webhook) {
     curl_exec($c);
     curl_close($c);
 }
+
 function generateRandomString($length = 8)
 {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -108,7 +110,7 @@ function createUserAccount($user, $password, $newExpireTimestamp)
                 "expire_timestamp" => $newExpireTimestamp,
                 "login_system" => 'native'
             ]);
-            
+
             $logMsg = "INSERT INTO users (id, user, expire_timestamp, login_system) VALUES ('{$getId}', '{$user}', '{$newExpireTimestamp}', 'native'); -- " . date('Y-m-d H:i:s') . "\r\n";
             file_put_contents($logfile, $logMsg, FILE_APPEND);
 
@@ -124,7 +126,7 @@ function createUserAccount($user, $password, $newExpireTimestamp)
 function resetUserPassword($user, $password, $resetType)
 {
     global $db, $logfile;
-    
+
     $hashedPwd = password_hash($password, PASSWORD_DEFAULT);
     if ($resetType === 0) {
         $db->update("users", [
@@ -174,7 +176,7 @@ function updateExpireTimestamp($user, $login_system, $newExpireTimestamp)
 function destroyCookiesAndSessions()
 {
     global $db;
-    
+
     $db->update("users", [
         "session_id" => null
     ], [
@@ -184,7 +186,7 @@ function destroyCookiesAndSessions()
 
     unset($_SESSION);
     unset($_COOKIE['LoginCookie']);
-    setcookie("LoginCookie", "", time()-3600);
+    setcookie("LoginCookie", "", time() - 3600);
     session_destroy();
     session_write_close();
 }
@@ -192,23 +194,26 @@ function destroyCookiesAndSessions()
 function validateCookie($cookie)
 {
     global $db;
+    $q = "user";
+    if ($db->info()['driver'] == 'pgsql') {
+        $q = "\"user\"";
+    }
     $info = $db->query(
-        "SELECT id, user, password, login_system, expire_timestamp FROM users WHERE session_id = :session_id", [
+        "SELECT id, " . $q . ", password, login_system, expire_timestamp FROM users WHERE session_id = :session_id", [
             ":session_id" => $cookie
         ]
     )->fetch();
-
     if (!empty($info['user'])) {
         $_SESSION['user'] = new \stdClass();
         $_SESSION['user']->id = $info['id'];
         $_SESSION['user']->user = $info['user'];
         $_SESSION['user']->login_system = $info['login_system'];
         $_SESSION['user']->expire_timestamp = $info['expire_timestamp'];
-        
+
         if (empty($info['password']) && $info['login_system'] == 'native') {
             $_SESSION['user']->updatePwd = 1;
         }
-        setcookie("LoginCookie", $cookie, time()+60*60*24*7);
+        setcookie("LoginCookie", $cookie, time() + 60 * 60 * 24 * 7);
         return true;
     } else {
         destroyCookiesAndSessions();
@@ -216,18 +221,15 @@ function validateCookie($cookie)
     }
 }
 
-if (!function_exists('getallheaders')) 
-{
-    function getallheaders() 
+if (!function_exists('getallheaders')) {
+    function getallheaders()
     {
-        $headers = array (); 
-        foreach ($_SERVER as $name => $value) 
-        {
-            if (substr($name, 0, 5) == 'HTTP_') 
-            { 
-                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value; 
+        $headers = array();
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
-        return $headers; 
+        return $headers;
     }
 }
