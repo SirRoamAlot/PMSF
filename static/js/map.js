@@ -1264,7 +1264,7 @@ function setupPokestopMarker(item) {
 function setupNestMarker(item) {
     if (item.pokemon_id > 0) {
         var str = '<div class="marker-nests">' +
-            '<img src="static/images/nest-' + item.pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
+            '<img src="static/images/nest-' + item.english_pokemon_types[0].type.toLowerCase() + '.png" style="width:36px;height: auto;"/>' +
             '<i class="nest-pokemon-sprite n' + item.pokemon_id + '"></i>' +
             '</div>'
     }
